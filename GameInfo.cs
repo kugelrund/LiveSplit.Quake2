@@ -7,9 +7,9 @@ namespace LiveSplit.Quake2
     {
         // 1 - main menu
         // 7 - in game
-        private static readonly MemoryAddress gameStateAddress = new MemoryAddress(0x61BDC0);
-
-        private static readonly MemoryAddress mapAddress = new MemoryAddress(0x6086C4);
+        private static readonly DeepPointer gameStateAddress = new DeepPointer(0x31BDC0, new int[] {});
+       
+        private static readonly DeepPointer mapAddress = new DeepPointer(0x3086C4, new int[] { });
 
 
         // longest map name is forgeboss
@@ -32,7 +32,8 @@ namespace LiveSplit.Quake2
 
         private void UpdateMap()
         {
-            string map = mapAddress.Deref(gameProcess, MAX_MAP_LENGTH);
+            string map;
+            mapAddress.Deref(gameProcess, out map, MAX_MAP_LENGTH);
             if (map.Length > 0 && map != CurrMap)
             {
                 PrevMap = CurrMap;
@@ -44,7 +45,9 @@ namespace LiveSplit.Quake2
         public void Update()
         {
             PrevGameState = CurrGameState;
-            CurrGameState = gameStateAddress.Deref(gameProcess);
+            int currGameState;
+            gameStateAddress.Deref<int>(gameProcess, out currGameState);
+            CurrGameState = currGameState;
 
             if (PrevGameState != CurrGameState)
             {
