@@ -8,7 +8,7 @@ using System.Text;
 
 namespace LiveSplit.Quake2
 {
-    class DeepPointer
+    public class DeepPointer
     {
         private List<int> _offsets;
         private int _base;
@@ -16,7 +16,7 @@ namespace LiveSplit.Quake2
 
         public DeepPointer(string module, int base_, params int[] offsets)
         {
-            _module = module.ToLower();
+            _module = module;
             _base = base_;
             _offsets = new List<int>();
             _offsets.Add(0); // deref base first
@@ -85,7 +85,7 @@ namespace LiveSplit.Quake2
             if (!String.IsNullOrEmpty(_module))
             {
                 ProcessModule module = process.Modules.Cast<ProcessModule>()
-                    .FirstOrDefault(m => Path.GetFileName(m.FileName).ToLower() == _module);
+                    .FirstOrDefault(m => Path.GetFileName(m.FileName).ToLower() == _module.ToLower());
                 if (module == null)
                 {
                     ptr = IntPtr.Zero;
