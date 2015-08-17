@@ -58,7 +58,7 @@ namespace LiveSplit.Quake2
                 
                 if (settings.PauseGameTime)
                 {
-                    state.IsGameTimePaused = !info.InGame;
+                    state.IsGameTimePaused = !info.InGame || info.InIntermission;
                 }
             }
             else

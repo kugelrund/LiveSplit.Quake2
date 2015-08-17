@@ -12,6 +12,8 @@ namespace LiveSplit.Quake2
        
         private static readonly DeepPointer mapAddress = new DeepPointer(0x3086C4, new int[] { });
 
+        private static readonly DeepPointer inIntermissionAddress = new DeepPointer(0x2C679C, new int[] { });
+
         
         private const int MAX_MAP_LENGTH = 8;
 
@@ -23,6 +25,19 @@ namespace LiveSplit.Quake2
         public string CurrMap { get; private set; }
         public bool MapChanged { get; private set; }
         public bool InGame { get; private set; }
+        public bool InIntermission
+        {
+            get
+            {
+                int inIntermission;
+                if (inIntermissionAddress.Deref(gameProcess, out inIntermission))
+                {
+                    return inIntermission != 0;
+                }
+
+                return false;
+            }
+        }
 
 
         public GameInfo(Process gameProcess)
