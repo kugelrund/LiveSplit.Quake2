@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace LiveSplit.Quake2
@@ -11,9 +12,8 @@ namespace LiveSplit.Quake2
        
         private static readonly DeepPointer mapAddress = new DeepPointer(0x3086C4, new int[] { });
 
-
-        // longest map name is forgeboss
-        private const int MAX_MAP_LENGTH = 10;
+        
+        private const int MAX_MAP_LENGTH = 8;
 
         private Process gameProcess;
 
@@ -61,74 +61,79 @@ namespace LiveSplit.Quake2
         }
     }
 
-    abstract class GameEvent : IComparable<GameEvent>
+    struct Map
     {
-        private static GameEvent[] eventList = null;
+        public Map(string name, int unit, bool isSecret)
+        {
+            this.name = name;
+            this.unit = unit;
+            this.isSecret = isSecret;
+        }
 
-        private int order = -1;
-        public int Order { get { return order; } }
+        public string name;
+        public int unit;
+        public bool isSecret;
+    }
+
+    abstract class GameEvent
+    {
+        private static Dictionary<string, GameEvent> events = null;
         public abstract string Id { get; }
 
-        public static GameEvent[] GetEventList()
+        public static Dictionary<string, GameEvent> GetEvents()
         {
-            if (eventList == null)
+            if (events == null)
             {
-                eventList = new GameEvent[] { 
-                    #region events
-                    new LoadedMapEvent("base1"),
-                    new LoadedMapEvent("base2"),
-                    new LoadedMapEvent("base3"),
-                    new LoadedMapEvent("bunk1"),
-                    new LoadedMapEvent("ware1"),
-                    new LoadedMapEvent("ware2"),
-                    new LoadedMapEvent("jail1"),
-                    new LoadedMapEvent("jail2"),
-                    new LoadedMapEvent("jail3"),
-                    new LoadedMapEvent("jail4"),
-                    new LoadedMapEvent("jail5"),
-                    new LoadedMapEvent("security"),
-                    new LoadedMapEvent("mintro"),
-                    new LoadedMapEvent("mine1"),
-                    new LoadedMapEvent("mine2"),
-                    new LoadedMapEvent("mine3"),
-                    new LoadedMapEvent("mine4"),
-                    new LoadedMapEvent("fact1"),
-                    new LoadedMapEvent("fact2"),
-                    new LoadedMapEvent("power1"),
-                    new LoadedMapEvent("power2"),
-                    new LoadedMapEvent("biggun"),
-                    new LoadedMapEvent("hangar1"),
-                    new LoadedMapEvent("lab"),
-                    new LoadedMapEvent("hangar2"),
-                    new LoadedMapEvent("command"),
-                    new LoadedMapEvent("strike"),
-                    new LoadedMapEvent("city1"),
-                    new LoadedMapEvent("city2"),
-                    new LoadedMapEvent("city3"),
-                    new LoadedMapEvent("boss1"),
-                    new LoadedMapEvent("boss2"),
-                    new LoadedMapEvent("victory.pc"),
-                    #endregion
-                };
-                for (int i = 0; i < eventList.Length; ++i)
+                #region maps
+                Map[] maps = {new Map("base1", 1, false),
+                              new Map("base2", 1, false),
+                              new Map("base3", 1, false),
+                              new Map("train", 1, true),
+                              new Map("bunk1", 2, false),
+                              new Map("ware1", 2, false),
+                              new Map("ware2", 2, false),
+                              new Map("jail1", 3, false),
+                              new Map("jail2", 3, false),
+                              new Map("jail3", 3, false),
+                              new Map("jail4", 3, false),
+                              new Map("jail5", 3, false),
+                              new Map("security", 3, false),
+                              new Map("mintro", 4, false),
+                              new Map("mine1", 4, false),
+                              new Map("mine2", 4, false),
+                              new Map("mine3", 4, false),
+                              new Map("mine4", 4, false),
+                              new Map("fact1", 5, false),
+                              new Map("fact3", 5, true),
+                              new Map("fact2", 5, false),
+                              new Map("power1", 6, false),
+                              new Map("power2", 6, false),
+                              new Map("cool1", 6, false),
+                              new Map("waste1", 6, false),
+                              new Map("waste2", 6, false),
+                              new Map("waste3", 6, false),
+                              new Map("biggun", 7, false),
+                              new Map("hangar1", 8, false),
+                              new Map("space", 8, true),
+                              new Map("lab", 8, false),
+                              new Map("hangar2", 8, false),
+                              new Map("command", 8, false),
+                              new Map("strike", 8, false),
+                              new Map("city1", 9, false),
+                              new Map("city2", 9, false),
+                              new Map("city3", 9, false),
+                              new Map("boss1", 10, false),
+                              new Map("boss2", 10, false) };
+                #endregion
+
+                events = new Dictionary<string, GameEvent>();
+                foreach (Map map in maps)
                 {
-                    eventList[i].order = i;
+                    events.Add("loaded_map_" + map.name, new LoadedMapEvent(map));
                 }
             }
 
-            return eventList;
-        }
-
-        public int CompareTo(GameEvent other)
-        {
-            if (order == -1 || other.order == -1)
-            {
-                throw new ArgumentException();
-            }
-            else
-            {
-                return order - other.order;
-            }
+            return events;
         }
 
         public abstract bool HasOccured(GameInfo info);
@@ -136,9 +141,17 @@ namespace LiveSplit.Quake2
     
     abstract class MapEvent : GameEvent
     {
-        protected readonly string map;
+        protected readonly Map map;
 
-        public MapEvent(string map)
+        public int MapUnit
+        {
+            get
+            {
+                return map.unit;
+            }
+        }
+
+        public MapEvent(Map map)
         {
             this.map = map;
         }
@@ -146,18 +159,25 @@ namespace LiveSplit.Quake2
 
     class LoadedMapEvent : MapEvent
     {
-        public override string Id { get { return "loaded_map_" + map; } }
+        public override string Id { get { return "loaded_map_" + map.name; } }
 
-        public LoadedMapEvent(string map) : base(map) { }
+        public LoadedMapEvent(Map map) : base(map) { }
 
         public override bool HasOccured(GameInfo info)
         {
-            return (info.PrevGameState != 7) && info.InGame && (info.CurrMap == map);
+            return (info.PrevGameState != 7) && info.InGame && (info.CurrMap == map.name);
         }
                 
         public override string ToString()
         {
-            return "Loaded '" + map + "'";
+            if (map.isSecret)
+            {
+                return "Loaded '" + map.name + "' (secret map)";
+            }
+            else
+            {
+                return "Loaded '" + map.name + "'";
+            }
         }
     }
     

@@ -36,7 +36,10 @@
             this.btnAddEvent = new System.Windows.Forms.Button();
             this.btnRemoveEvent = new System.Windows.Forms.Button();
             this.lblAvailEvents = new System.Windows.Forms.Label();
+            this.btnUp = new System.Windows.Forms.Button();
+            this.btnDown = new System.Windows.Forms.Button();
             this.chkPauseGameTime = new System.Windows.Forms.CheckBox();
+            this.cmbCategory = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
             // lstUsedEvents
@@ -45,13 +48,13 @@
             this.lstUsedEvents.Location = new System.Drawing.Point(13, 23);
             this.lstUsedEvents.Name = "lstUsedEvents";
             this.lstUsedEvents.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.lstUsedEvents.Size = new System.Drawing.Size(196, 160);
+            this.lstUsedEvents.Size = new System.Drawing.Size(196, 186);
             this.lstUsedEvents.TabIndex = 3;
             // 
             // lstAvailEvents
             // 
             this.lstAvailEvents.FormattingEnabled = true;
-            this.lstAvailEvents.Location = new System.Drawing.Point(254, 23);
+            this.lstAvailEvents.Location = new System.Drawing.Point(254, 49);
             this.lstAvailEvents.Name = "lstAvailEvents";
             this.lstAvailEvents.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
             this.lstAvailEvents.Size = new System.Drawing.Size(195, 160);
@@ -68,7 +71,7 @@
             // 
             // btnAllEvents
             // 
-            this.btnAllEvents.Location = new System.Drawing.Point(215, 131);
+            this.btnAllEvents.Location = new System.Drawing.Point(215, 157);
             this.btnAllEvents.Name = "btnAllEvents";
             this.btnAllEvents.Size = new System.Drawing.Size(33, 23);
             this.btnAllEvents.TabIndex = 9;
@@ -78,7 +81,7 @@
             // 
             // btnNoEvents
             // 
-            this.btnNoEvents.Location = new System.Drawing.Point(215, 160);
+            this.btnNoEvents.Location = new System.Drawing.Point(215, 186);
             this.btnNoEvents.Name = "btnNoEvents";
             this.btnNoEvents.Size = new System.Drawing.Size(33, 23);
             this.btnNoEvents.TabIndex = 10;
@@ -115,22 +118,67 @@
             this.lblAvailEvents.TabIndex = 13;
             this.lblAvailEvents.Text = "Available events:";
             // 
+            // btnUp
+            // 
+            this.btnUp.Location = new System.Drawing.Point(126, 215);
+            this.btnUp.Name = "btnUp";
+            this.btnUp.Size = new System.Drawing.Size(33, 23);
+            this.btnUp.TabIndex = 15;
+            this.btnUp.Text = "Up";
+            this.btnUp.UseVisualStyleBackColor = true;
+            this.btnUp.Click += new System.EventHandler(this.btnUp_Click);
+            // 
+            // btnDown
+            // 
+            this.btnDown.Location = new System.Drawing.Point(165, 215);
+            this.btnDown.Name = "btnDown";
+            this.btnDown.Size = new System.Drawing.Size(44, 23);
+            this.btnDown.TabIndex = 16;
+            this.btnDown.Text = "Down";
+            this.btnDown.UseVisualStyleBackColor = true;
+            this.btnDown.Click += new System.EventHandler(this.btnDown_Click);
+            // 
             // chkPauseGameTime
             // 
             this.chkPauseGameTime.AutoSize = true;
-            this.chkPauseGameTime.Location = new System.Drawing.Point(13, 198);
+            this.chkPauseGameTime.Location = new System.Drawing.Point(13, 250);
             this.chkPauseGameTime.Name = "chkPauseGameTime";
-            this.chkPauseGameTime.Size = new System.Drawing.Size(173, 17);
-            this.chkPauseGameTime.TabIndex = 14;
-            this.chkPauseGameTime.Text = "Pause game time when loading";
+            this.chkPauseGameTime.Size = new System.Drawing.Size(305, 17);
+            this.chkPauseGameTime.TabIndex = 17;
+            this.chkPauseGameTime.Text = "Pause game time while loading and during unit-end screens";
             this.chkPauseGameTime.UseVisualStyleBackColor = true;
             this.chkPauseGameTime.CheckedChanged += new System.EventHandler(this.chkPauseGameTime_CheckedChanged);
+            // 
+            // cmbCategory
+            // 
+            this.cmbCategory.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbCategory.FormattingEnabled = true;
+            this.cmbCategory.Items.AddRange(new object[] {
+            "All units",
+            "Unit 1: Base",
+            "Unit 2: Station",
+            "Unit 3: Jail",
+            "Unit 4: Mine",
+            "Unit 5: Factory",
+            "Unit 6: Power Plant",
+            "Unit 7: Big Gun",
+            "Unit 8: Hangar",
+            "Unit 9: Palace",
+            "Unit 10: Final Showdown"});
+            this.cmbCategory.Location = new System.Drawing.Point(254, 23);
+            this.cmbCategory.Name = "cmbCategory";
+            this.cmbCategory.Size = new System.Drawing.Size(195, 21);
+            this.cmbCategory.TabIndex = 18;
+            this.cmbCategory.SelectedIndexChanged += new System.EventHandler(this.cmbCategory_SelectedIndexChanged);
             // 
             // Settings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.cmbCategory);
             this.Controls.Add(this.chkPauseGameTime);
+            this.Controls.Add(this.btnDown);
+            this.Controls.Add(this.btnUp);
             this.Controls.Add(this.lblAvailEvents);
             this.Controls.Add(this.btnRemoveEvent);
             this.Controls.Add(this.btnAddEvent);
@@ -141,7 +189,7 @@
             this.Controls.Add(this.lstUsedEvents);
             this.Name = "Settings";
             this.Padding = new System.Windows.Forms.Padding(7);
-            this.Size = new System.Drawing.Size(459, 241);
+            this.Size = new System.Drawing.Size(459, 275);
             this.HandleDestroyed += new System.EventHandler(this.settings_HandleDestroyed);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -158,6 +206,9 @@
         private System.Windows.Forms.Button btnAddEvent;
         private System.Windows.Forms.Button btnRemoveEvent;
         private System.Windows.Forms.Label lblAvailEvents;
+        private System.Windows.Forms.Button btnUp;
+        private System.Windows.Forms.Button btnDown;
         private System.Windows.Forms.CheckBox chkPauseGameTime;
+        private System.Windows.Forms.ComboBox cmbCategory;
     }
 }

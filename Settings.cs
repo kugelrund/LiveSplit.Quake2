@@ -7,8 +7,7 @@ namespace LiveSplit.Quake2
 {
     partial class Settings : UserControl
     {
-        private readonly GameEvent[] eventList;
-        private readonly Dictionary<string, int> order;
+        private readonly Dictionary<string, GameEvent> events;
 
         public bool PauseGameTime { get; private set; }
 
@@ -26,15 +25,14 @@ namespace LiveSplit.Quake2
         {
             InitializeComponent();
 
-            eventList = GameEvent.GetEventList();
-            order = new Dictionary<string, int>();
-            for (int i = 0; i < eventList.Length; ++i)
-            {
-                order.Add(eventList[i].Id, i);
-            }
+            events = GameEvent.GetEvents();
 
-            lstAvailEvents.Items.AddRange(eventList);
+            foreach (object item in events.Values)
+            {
+                lstAvailEvents.Items.Add(item);
+            }
             PauseGameTime = false;
+            cmbCategory.SelectedIndex = 0;
         }
 
         public GameEvent[] GetEventList()
@@ -50,87 +48,112 @@ namespace LiveSplit.Quake2
             return gameEvents;
         }
 
-        private int GetEventPosition(ListBox.ObjectCollection collection, GameEvent gameEvent)
-        {
-            int top = collection.Count;
-            if (top == 0) return 0;
-            int bottom = 0;
-            int mid;
-            
-            while (bottom + 1 != top)
-            {
-                mid = (bottom + top) / 2;
-                if (gameEvent.CompareTo(collection[mid] as GameEvent) < 0)
-                {
-                    top = mid;
-                }
-                else
-                {
-                    bottom = mid;
-                }
-            }
-
-            if (gameEvent.CompareTo(collection[bottom] as GameEvent) > 0)
-            {
-                return top;
-            }
-            else
-            {
-                return bottom;
-            }
-        }
-
-        private void SwitchSelectedEvents(ListBox source, ListBox destination)
-        {
-            source.BeginUpdate();
-            destination.BeginUpdate();
-            destination.SelectedIndices.Clear();
-            int insertPosition;
-            while (source.SelectedItems.Count > 0)
-            {
-                insertPosition = GetEventPosition(destination.Items, source.SelectedItems[0] as GameEvent);
-                destination.Items.Insert(insertPosition, source.SelectedItems[0]);
-                destination.SelectedIndices.Add(insertPosition);
-                source.Items.RemoveAt(source.SelectedIndices[0]);
-            }
-            source.EndUpdate();
-            destination.EndUpdate();
-            eventsChanged = true;
-        }
-
-        private void FillEvents(ListBox fill, ListBox empty)
-        {
-            empty.Items.Clear();
-            fill.Items.Clear();
-            fill.Items.AddRange(eventList);
-            eventsChanged = true;
-        }
-
         private void btnAddEvent_Click(object sender, EventArgs e)
         {
-            SwitchSelectedEvents(lstAvailEvents, lstUsedEvents);
+            lstUsedEvents.BeginUpdate();
+
+            foreach (object item in lstAvailEvents.SelectedItems)
+            {
+                lstUsedEvents.Items.Add(item);
+            }
+            
+            lstUsedEvents.EndUpdate();
+            eventsChanged = true;
         }
 
         private void btnRemoveEvent_Click(object sender, EventArgs e)
         {
-            SwitchSelectedEvents(lstUsedEvents, lstAvailEvents);
+            lstUsedEvents.BeginUpdate();
+
+            while (lstUsedEvents.SelectedIndices.Count > 0)
+            {
+                lstUsedEvents.Items.RemoveAt(lstUsedEvents.SelectedIndices[0]);
+            }
+
+            lstUsedEvents.EndUpdate();
+            eventsChanged = true;
         }
 
         private void btnAllEvents_Click(object sender, EventArgs e)
         {
-            FillEvents(lstUsedEvents, lstAvailEvents);
+            lstUsedEvents.BeginUpdate();
+            lstAvailEvents.BeginUpdate();
+            lstAvailEvents.SelectedIndices.Clear();
+
+            lstUsedEvents.Items.AddRange(lstAvailEvents.Items);
+
+            lstAvailEvents.EndUpdate();
+            lstUsedEvents.EndUpdate();
+            eventsChanged = true;
         }
 
         private void btnNoEvents_Click(object sender, EventArgs e)
         {
-            FillEvents(lstAvailEvents, lstUsedEvents);
+            lstUsedEvents.BeginUpdate();
+            lstUsedEvents.Items.Clear();
+            lstUsedEvents.EndUpdate();
+        }
+
+
+        private void btnUp_Click(object sender, EventArgs e)
+        {
+            foreach (int index in lstUsedEvents.SelectedIndices)
+            {
+                if (index != 0)
+                {
+                    object item = lstUsedEvents.Items[index];
+                    lstUsedEvents.Items.RemoveAt(index);
+                    lstUsedEvents.Items.Insert(index - 1, item);
+                    lstUsedEvents.SelectedIndices.Add(index - 1);
+                }
+            }
+        }
+
+        private void btnDown_Click(object sender, EventArgs e)
+        {
+            foreach (int index in lstUsedEvents.SelectedIndices)
+            {
+                if (index != lstUsedEvents.Items.Count - 1)
+                {
+                    object item = lstUsedEvents.Items[index];
+                    lstUsedEvents.Items.RemoveAt(index);
+                    lstUsedEvents.Items.Insert(index + 1, item);
+                    lstUsedEvents.SelectedIndices.Add(index + 1);
+                }
+            }
+        }
+
+        private void cmbCategory_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            lstAvailEvents.BeginUpdate();
+            lstAvailEvents.Items.Clear();
+
+            if (cmbCategory.SelectedIndex == 0)
+            {
+                foreach (object item in events.Values)
+                {
+                    lstAvailEvents.Items.Add(item);
+                }
+            }
+            else
+            {
+                foreach (object item in events.Values)
+                {
+                    if ((item as MapEvent).MapUnit == cmbCategory.SelectedIndex)
+                    {
+                        lstAvailEvents.Items.Add(item);
+                    }
+                }
+            }
+
+            lstAvailEvents.EndUpdate();
         }
 
         private void chkPauseGameTime_CheckedChanged(object sender, EventArgs e)
         {
             PauseGameTime = chkPauseGameTime.Checked;
         }
-        
+
         private void settings_HandleDestroyed(object sender, EventArgs e)
         {
             if (eventsChanged)
@@ -165,21 +188,15 @@ namespace LiveSplit.Quake2
         {
             if (settings["usedEvents"] != null)
             {
-                FillEvents(lstAvailEvents, lstUsedEvents);
-                lstAvailEvents.BeginUpdate();
                 lstUsedEvents.BeginUpdate();
-                int currOrder;
-                int i = 0;
+                lstUsedEvents.Items.Clear();
                 foreach (XmlNode node in settings["usedEvents"].ChildNodes)
                 {
-                    if (order.TryGetValue(node.InnerText, out currOrder))
+                    if (events.ContainsKey(node.InnerText))
                     {
-                        lstUsedEvents.Items.Add(eventList[currOrder]);
-                        lstAvailEvents.Items.RemoveAt(currOrder - i);
-                        ++i;
+                        lstUsedEvents.Items.Add(events[node.InnerText]);
                     }
                 }
-                lstAvailEvents.EndUpdate();
                 lstUsedEvents.EndUpdate();
 
                 eventsChanged = false;
