@@ -3,9 +3,9 @@ LiveSplit.Quake2
 
 LiveSplit auto splitter for Quake2. Can also pause LiveSplits game timer while in loading screens.
 
-Manual Installation
--------------------
-Download "LiveSplit.Quake2.dll" and place it into the subdirectory "Components" of your LiveSplit folder. You can then add it to your layout (category "Control").
+Installation
+------------
+Enter "Quake II" in LiveSplit's splits editor. Click activate.
 
 Usage
 -----
