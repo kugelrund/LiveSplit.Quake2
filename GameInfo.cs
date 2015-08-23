@@ -1,6 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
+using LiveSplit.ComponentUtil;
 
 namespace LiveSplit.Quake2
 {
@@ -9,9 +9,7 @@ namespace LiveSplit.Quake2
         // 1 - main menu
         // 7 - in game
         private static readonly DeepPointer gameStateAddress = new DeepPointer(0x31BDC0, new int[] {});
-       
         private static readonly DeepPointer mapAddress = new DeepPointer(0x3086C4, new int[] { });
-
         private static readonly DeepPointer inIntermissionAddress = new DeepPointer(0x2C679C, new int[] { });
 
         
