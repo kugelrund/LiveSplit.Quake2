@@ -92,6 +92,7 @@ namespace LiveSplit.Quake2
             lstUsedEvents.BeginUpdate();
             lstUsedEvents.Items.Clear();
             lstUsedEvents.EndUpdate();
+            eventsChanged = true;
         }
 
 
@@ -107,6 +108,8 @@ namespace LiveSplit.Quake2
                     lstUsedEvents.SelectedIndices.Add(index - 1);
                 }
             }
+
+            eventsChanged = true;
         }
 
         private void btnDown_Click(object sender, EventArgs e)
@@ -121,6 +124,8 @@ namespace LiveSplit.Quake2
                     lstUsedEvents.SelectedIndices.Add(index + 1);
                 }
             }
+
+            eventsChanged = true;
         }
 
         private void cmbCategory_SelectedIndexChanged(object sender, EventArgs e)

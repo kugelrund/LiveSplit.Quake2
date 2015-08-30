@@ -37,7 +37,7 @@ namespace LiveSplit.Quake2
             if (gameProcess != null && !gameProcess.HasExited)
             {
                 info.Update();
-                if (eventList[state.CurrentSplitIndex + 1].HasOccured(info))
+                if (state.CurrentSplitIndex + 1 < eventList.Length && eventList[state.CurrentSplitIndex + 1].HasOccured(info))
                 {
                     if (state.CurrentPhase == TimerPhase.NotRunning)
                     {

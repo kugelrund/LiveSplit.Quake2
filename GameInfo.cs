@@ -45,9 +45,8 @@ namespace LiveSplit.Quake2
 
         private void UpdateMap()
         {
-            string map;
-            mapAddress.Deref(gameProcess, out map, MAX_MAP_LENGTH);
-            if (map.Length > 0 && map != CurrMap)
+            string map = mapAddress.DerefString(gameProcess, MAX_MAP_LENGTH);
+            if (map != null && map != CurrMap)
             {
                 PrevMap = CurrMap;
                 CurrMap = map;
@@ -59,7 +58,7 @@ namespace LiveSplit.Quake2
         {
             PrevGameState = CurrGameState;
             int currGameState;
-            gameStateAddress.Deref<int>(gameProcess, out currGameState);
+            gameStateAddress.Deref(gameProcess, out currGameState);
             CurrGameState = currGameState;
 
             if (PrevGameState != CurrGameState)
