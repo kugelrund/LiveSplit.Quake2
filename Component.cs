@@ -1,4 +1,5 @@
-﻿using LiveSplit.Model;
+﻿using LiveSplit.ComponentUtil;
+using LiveSplit.Model;
 using LiveSplit.UI.Components;
 using System;
 using System.Diagnostics;
@@ -58,7 +59,7 @@ namespace LiveSplit.Quake2
             else
             {
                 gameProcess = Process.GetProcessesByName("q2pro").FirstOrDefault();
-                if (gameProcess != null)
+                if (gameProcess != null && !gameProcess.HasExited)
                 {
                     info = new GameInfo(gameProcess);
                 }

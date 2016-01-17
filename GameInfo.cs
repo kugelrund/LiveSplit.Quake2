@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿
+using System.Collections.Generic;
 using System.Diagnostics;
 using LiveSplit.ComponentUtil;
+using System.Windows.Forms;
 
 namespace LiveSplit.Quake2
 {
@@ -8,14 +10,18 @@ namespace LiveSplit.Quake2
     {
         // 1 - main menu
         // 7 - in game
-        private static readonly DeepPointer gameStateAddress = new DeepPointer(0x31BDC0, new int[] {});
-        private static readonly DeepPointer mapAddress = new DeepPointer(0x3086C4, new int[] { });
-        private static readonly DeepPointer inIntermissionAddress = new DeepPointer(0x2C679C, new int[] { });
+        private DeepPointer gameStateAddress;
+        // current map
+        private DeepPointer mapAddress;
+        // 0 when not in intermission, something != 0 when in intermission
+        private DeepPointer inIntermissionAddress;
 
         
         private const int MAX_MAP_LENGTH = 8;
 
         private Process gameProcess;
+
+        private GameVersion gameVersion;
 
         public int PrevGameState { get; private set; }
         public int CurrGameState { get; private set; }
@@ -41,6 +47,34 @@ namespace LiveSplit.Quake2
         public GameInfo(Process gameProcess)
         {
             this.gameProcess = gameProcess;
+            if (gameProcess.MainModuleWow64Safe().ModuleMemorySize == 5029888)
+            {
+                gameVersion = GameVersion.v2014_12_03;
+            }
+            else if (gameProcess.MainModuleWow64Safe().ModuleMemorySize == 5033984)
+            {
+                gameVersion = GameVersion.v2016_01_12;
+            }
+            else
+            {
+                MessageBox.Show("Unsupported game version", "LiveSplit.Quake2", 
+                                MessageBoxButtons.OK, MessageBoxIcon.Error);
+                gameVersion = GameVersion.v2014_12_03;
+            }
+
+            switch (gameVersion)
+            {
+                case GameVersion.v2014_12_03:
+                    gameStateAddress = new DeepPointer(0x31BDC0);
+                    mapAddress = new DeepPointer(0x3086C4);
+                    inIntermissionAddress = new DeepPointer(0x2C679C);
+                    break;
+                case GameVersion.v2016_01_12:
+                    gameStateAddress = new DeepPointer(0x286400);
+                    mapAddress = new DeepPointer(0x33FF44);
+                    inIntermissionAddress = new DeepPointer(0x2FDF28);
+                    break;
+            }
         }
 
         private void UpdateMap()
@@ -201,5 +235,11 @@ namespace LiveSplit.Quake2
         {
             return false;
         }
+    }
+
+    public enum GameVersion
+    {
+        v2014_12_03, // latest version of original Quake II Pro release, build from Dec 3 2014
+        v2016_01_12  // first release of modified Q2PRO, build from Jan 12 2016
     }
 }
