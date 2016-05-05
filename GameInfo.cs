@@ -23,6 +23,13 @@ namespace LiveSplit.Quake2
 
         private GameVersion gameVersion;
 
+        public Process GameProcess
+        {
+            get
+            {
+                return gameProcess;
+            }
+        }
         public int PrevGameState { get; private set; }
         public int CurrGameState { get; private set; }
         public string PrevMap { get; private set; }
@@ -239,7 +246,7 @@ namespace LiveSplit.Quake2
 
     public enum GameVersion
     {
-        v2014_12_03, // latest version of original Quake II Pro release, build from Dec 3 2014
+        v2014_12_03, // latest version of original Q2PRO release, build from Dec 3 2014
         v2016_01_12  // first release of modified Q2PRO, build from Jan 12 2016
     }
 }

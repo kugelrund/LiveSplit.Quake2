@@ -12,8 +12,7 @@ namespace LiveSplit.Quake2
     {
         private Settings settings = new Settings();
         private TimerModel model = null;
-
-        private Process gameProcess = null;
+        
         private GameInfo info = null;
         private GameEvent[] eventList = null;
 
@@ -35,7 +34,7 @@ namespace LiveSplit.Quake2
 
         public override void Update(UI.IInvalidator invalidator, Model.LiveSplitState state, float width, float height, UI.LayoutMode mode)
         {
-            if (gameProcess != null && !gameProcess.HasExited)
+            if (info != null && !info.GameProcess.HasExited)
             {
                 info.Update();
                 if (state.CurrentSplitIndex + 1 < eventList.Length && eventList[state.CurrentSplitIndex + 1].HasOccured(info))
@@ -58,10 +57,14 @@ namespace LiveSplit.Quake2
             }
             else
             {
-                gameProcess = Process.GetProcessesByName("q2pro").FirstOrDefault();
+                Process gameProcess = Process.GetProcessesByName("q2pro").FirstOrDefault();
                 if (gameProcess != null && !gameProcess.HasExited)
                 {
                     info = new GameInfo(gameProcess);
+                }
+                else
+                {
+                    info = null;
                 }
             }
         }
