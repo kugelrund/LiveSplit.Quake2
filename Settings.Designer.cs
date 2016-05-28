@@ -164,7 +164,17 @@
             "Unit 7: Big Gun",
             "Unit 8: Hangar",
             "Unit 9: Palace",
-            "Unit 10: Final Showdown"});
+            "Unit 10: Final Showdown",
+            "Reckoning - Unit 1: Wilderness",
+            "Reckoning - Unit 2: Compound",
+            "Reckoning - Unit 3: Industrial",
+            "Reckoning - Unit 4: Spaceport",
+            "Reckoning - Unit 5: Moon Base",
+            "Ground Zero - Unit 1: Tectonic Stabilizer",
+            "Ground Zero - Unit 2: Base Complex",
+            "Ground Zero - Unit 3: Research Hangars",
+            "Ground Zero - Unit 4: Munitions Installation",
+            "Ground Zero - Unit 5: Widow's Lair"});
             this.cmbCategory.Location = new System.Drawing.Point(254, 23);
             this.cmbCategory.Name = "cmbCategory";
             this.cmbCategory.Size = new System.Drawing.Size(195, 21);
