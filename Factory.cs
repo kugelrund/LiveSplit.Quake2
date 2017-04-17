@@ -1,43 +1,26 @@
-﻿using LiveSplit.Model;
-using LiveSplit.UI.Components;
-using System;
+﻿using System;
 using System.Reflection;
+using LiveSplit.ComponentAutosplitter;
+using LiveSplit.Model;
+using LiveSplit.UI.Components;
 
 namespace LiveSplit.Quake2
 {
     public class Factory : IComponentFactory
     {
-        public string ComponentName
-        {
-            get { return "Quake 2 Auto Splitter"; }
-        }
-        public ComponentCategory Category
-        {
-            get { return ComponentCategory.Control; }
-        }
-        public string Description
-        {
-            get { return "Automates splitting for Quake 2 and allows to remove loadtimes."; }
-        }
+        private Quake2Game game = new Quake2Game();
+        public string ComponentName => game.Name + " Auto Splitter";
+        public string Description => "Automates splitting for " + game.Name + " and allows to remove loadtimes.";
+        public ComponentCategory Category => ComponentCategory.Control;
+
+        public string UpdateName => ComponentName;
+        public string UpdateURL => "https://raw.githubusercontent.com/kugelrund/LiveSplit.Quake2/master/";
+        public Version Version => Assembly.GetExecutingAssembly().GetName().Version;
+        public string XMLURL => UpdateURL + "Components/update.LiveSplit.Quake2.xml";
+
         public IComponent Create(LiveSplitState state)
         {
-            return new Component(state);
-        }
-        public string UpdateName
-        {
-            get { return ComponentName; }
-        }
-        public string UpdateURL
-        {
-            get { return "https://raw.githubusercontent.com/kugelrund/LiveSplit.Quake2/master/"; }
-        }
-        public Version Version
-        {
-            get { return Assembly.GetExecutingAssembly().GetName().Version; }
-        }
-        public string XMLURL
-        {
-            get { return UpdateURL + "Components/update.LiveSplit.Quake2.xml"; }
+            return new Component(game, state);
         }
     }
 }

@@ -17,7 +17,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\..\..\..\..\..\Program Files %28x86%29\LiveSplit\Components\</OutputPath>
+    <OutputPath>C:\Program Files %28x86%29\LiveSplit\Components\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -52,24 +52,38 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Component.cs" />
-    <Compile Include="GameInfo.cs" />
-    <Compile Include="Factory.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Settings.cs">
+    <Compile Include="LiveSplit.ComponentAutosplitter\ChangeEventForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="LiveSplit.ComponentAutosplitter\ChangeEventForm.Designer.cs">
+      <DependentUpon>ChangeEventForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LiveSplit.ComponentAutosplitter\Component.cs" />
+    <Compile Include="LiveSplit.ComponentAutosplitter\CustomSetting.cs" />
+    <Compile Include="LiveSplit.ComponentAutosplitter\Game.cs" />
+    <Compile Include="LiveSplit.ComponentAutosplitter\Settings.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Settings.Designer.cs">
+    <Compile Include="LiveSplit.ComponentAutosplitter\Settings.Designer.cs">
       <DependentUpon>Settings.cs</DependentUpon>
     </Compile>
+    <Compile Include="Quake2Game.cs" />
+    <Compile Include="Factory.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Settings.resx">
+    <Content Include="Components\update.LiveSplit.Quake2.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="LiveSplit.ComponentAutosplitter\ChangeEventForm.resx">
+      <DependentUpon>ChangeEventForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LiveSplit.ComponentAutosplitter\Settings.resx">
       <DependentUpon>Settings.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Components\update.LiveSplit.Quake2.xml" />
+    <None Include="README.md" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
