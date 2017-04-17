@@ -1,4 +1,17 @@
 <updates>
+  <update version="1.7">
+    <files>
+      <file path="Components/LiveSplit.Quake2.dll" status="changed"/>
+    </files>
+    <changelog>
+      <change>
+        Allow automatic split on final button press.
+      </change>
+      <change>
+        Allow for custom maps.
+      </change>
+    </changelog>
+  </update>
   <update version="1.6">
     <files>
       <file path="Components/LiveSplit.Quake2.dll" status="changed"/>

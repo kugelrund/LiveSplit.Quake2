@@ -7,7 +7,8 @@ namespace LiveSplit.Quake2
 
     class Quake2Game : Game
     {
-        private static readonly Type[] eventTypes = new Type[] { typeof(LoadedMapEvent) };
+        private static readonly Type[] eventTypes = new Type[] { typeof(LoadedMapEvent),
+                                                                 typeof(EndEvent) };
         public override Type[] EventTypes => eventTypes;
 
         public override string Name => "Quake II";
@@ -60,6 +61,26 @@ namespace LiveSplit.Quake2
         }
     }
 
+    class EndEvent : NoAttributeEvent
+    {
+        public override string Description => "Final button was pressed.";
+
+        public override bool HasOccured(GameInfo info)
+        {
+            if (info.CurrMap == "boss2")
+            {
+                return info.FinalButtonPressed;
+            }
+
+            return false;
+        }
+
+        public override string ToString()
+        {
+            return "Final button pressed";
+        }
+    }
+
     public enum GameVersion
     {
         v2014_12_03, // latest version of original Q2PRO release, build from Dec 3 2014
@@ -88,6 +109,7 @@ namespace LiveSplit.ComponentAutosplitter
         private Int32 mapAddress;
         // 0 when not in intermission, something != 0 when in intermission
         private Int32 inIntermissionAddress;
+        private Int32 finalButtonAddress;
         
         private GameVersion gameVersion;
         
@@ -107,6 +129,16 @@ namespace LiveSplit.ComponentAutosplitter
                 }
 
                 return false;
+            }
+        }
+
+        public bool FinalButtonPressed
+        {
+            get
+            {
+                bool finalButtonPressed = false;
+                gameProcess.ReadValue(baseAddress + finalButtonAddress, out finalButtonPressed);
+                return finalButtonPressed;
             }
         }
 
@@ -133,11 +165,13 @@ namespace LiveSplit.ComponentAutosplitter
                     gameStateAddress = 0x31BDC0;
                     mapAddress = 0x3086C4;
                     inIntermissionAddress = 0x2C679C;
+                    finalButtonAddress = 0x2936B8;  // probably wrong, TODO
                     break;
                 case GameVersion.v2016_01_12:
                     gameStateAddress = 0x286400;
                     mapAddress = 0x33FF44;
                     inIntermissionAddress = 0x2FDF28;
+                    finalButtonAddress = 0x2936B8;
                     break;
             }
         }
