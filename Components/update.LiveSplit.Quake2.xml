@@ -1,4 +1,14 @@
 <updates>
+  <update version="1.8">
+    <files>
+      <file path="Components/LiveSplit.Quake2.dll" status="changed"/>
+    </files>
+    <changelog>
+      <change>
+        Made final split work for coop too.
+      </change>
+    </changelog>
+  </update>
   <update version="1.7">
     <files>
       <file path="Components/LiveSplit.Quake2.dll" status="changed"/>
