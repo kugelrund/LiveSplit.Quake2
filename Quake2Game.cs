@@ -136,9 +136,9 @@ namespace LiveSplit.ComponentAutosplitter
         {
             get
             {
-                int finalButtonPressed = 0;
+                bool finalButtonPressed = false;
                 gameProcess.ReadValue(baseAddress + finalButtonAddress, out finalButtonPressed);
-                return finalButtonPressed == 1;
+                return finalButtonPressed;
             }
         }
 
@@ -165,13 +165,13 @@ namespace LiveSplit.ComponentAutosplitter
                     gameStateAddress = 0x31BDC0;
                     mapAddress = 0x3086C4;
                     inIntermissionAddress = 0x2C679C;
-                    finalButtonAddress = 0x354934;  // probably wrong, TODO
+                    finalButtonAddress = 0x2936B8;  // probably wrong, TODO
                     break;
                 case GameVersion.v2016_01_12:
                     gameStateAddress = 0x286400;
                     mapAddress = 0x33FF44;
                     inIntermissionAddress = 0x2FDF28;
-                    finalButtonAddress = 0x354934;
+                    finalButtonAddress = 0x2936B8;
                     break;
             }
         }
