@@ -1,4 +1,14 @@
 <updates>
+  <update version="1.10">
+    <files>
+      <file path="Components/LiveSplit.Quake2.dll" status="changed"/>
+    </files>
+    <changelog>
+      <change>
+        Allow game process to be called "q2.exe" according to Steam's name. However, the executable still has to be Q2PRO, vanilla client is not supported.
+      </change>
+    </changelog>
+  </update>
   <update version="1.9">
     <files>
       <file path="Components/LiveSplit.Quake2.dll" status="changed"/>
