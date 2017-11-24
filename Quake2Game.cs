@@ -12,7 +12,7 @@ namespace LiveSplit.Quake2
         public override Type[] EventTypes => eventTypes;
 
         public override string Name => "Quake II";
-        public override string[] ProcessNames => new string[] {"q2pro", "q2"};
+        public override string[] ProcessNames => new string[] {"q2pro", "quake2"};
         public override bool GameTimeExists => false;
         public override bool LoadRemovalExists => true;
 
