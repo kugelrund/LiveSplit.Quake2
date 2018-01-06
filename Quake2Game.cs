@@ -109,7 +109,7 @@ namespace LiveSplit.ComponentAutosplitter
         private Int32 mapAddress;
         // 0 when not in intermission, something != 0 when in intermission
         private Int32 inIntermissionAddress;
-        private Int32 finalButtonAddress;
+        private Int32 yPositionAddress;
         
         private GameVersion gameVersion;
         
@@ -136,9 +136,8 @@ namespace LiveSplit.ComponentAutosplitter
         {
             get
             {
-                bool finalButtonPressed = false;
-                gameProcess.ReadValue(baseAddress + finalButtonAddress, out finalButtonPressed);
-                return finalButtonPressed;
+                gameProcess.ReadValue(baseAddress + yPositionAddress, out float yPosition);
+                return yPosition >= 164.75 || yPosition <= -2084.75;
             }
         }
 
@@ -165,13 +164,13 @@ namespace LiveSplit.ComponentAutosplitter
                     gameStateAddress = 0x31BDC0;
                     mapAddress = 0x3086C4;
                     inIntermissionAddress = 0x2C679C;
-                    finalButtonAddress = 0x2936B8;  // probably wrong, TODO
+                    yPositionAddress = 0x155744;
                     break;
                 case GameVersion.v2016_01_12:
                     gameStateAddress = 0x286400;
                     mapAddress = 0x33FF44;
                     inIntermissionAddress = 0x2FDF28;
-                    finalButtonAddress = 0x2936B8;
+                    yPositionAddress = 0x156744;
                     break;
             }
         }
