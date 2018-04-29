@@ -84,7 +84,8 @@ namespace LiveSplit.Quake2
     public enum GameVersion
     {
         v2014_12_03, // latest version of original Q2PRO release, build from Dec 3 2014
-        v2016_01_12  // first release of modified Q2PRO, build from Jan 12 2016
+        v2016_01_12, // first release of modified Q2PRO, build from Jan 12 2016
+        v2018_04_22  // first release of QPRO Speed, r1063, build from Apr 22 2018
     }
 
     public enum Quake2State
@@ -151,6 +152,10 @@ namespace LiveSplit.ComponentAutosplitter
             {
                 gameVersion = GameVersion.v2016_01_12;
             }
+            else if (gameProcess.MainModuleWow64Safe().ModuleMemorySize == 5079040)
+            {
+                gameVersion = GameVersion.v2018_04_22;
+            }
             else
             {
                 MessageBox.Show("Unsupported game version", "LiveSplit.Quake2", 
@@ -171,6 +176,12 @@ namespace LiveSplit.ComponentAutosplitter
                     mapAddress = 0x33FF44;
                     inIntermissionAddress = 0x2FDF28;
                     yPositionAddress = 0x156744;
+                    break;
+                case GameVersion.v2018_04_22:
+                    gameStateAddress = 0x291180;
+                    mapAddress = 0x3A7490;
+                    inIntermissionAddress = 0x308C68;
+                    yPositionAddress = 0x161584;
                     break;
             }
         }
