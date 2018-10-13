@@ -1,4 +1,14 @@
 <updates>
+  <update version="1.13">
+    <files>
+      <file path="Components/LiveSplit.Quake2.dll" status="changed"/>
+    </files>
+    <changelog>
+      <change>
+       Add support for Q2PRO Speed.
+      </change>
+    </changelog>
+  </update>
   <update version="1.12">
     <files>
       <file path="Components/LiveSplit.Quake2.dll" status="changed"/>

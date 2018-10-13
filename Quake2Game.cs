@@ -13,10 +13,9 @@ namespace LiveSplit.Quake2
 
         public override string Name => "Quake II";
         public override string[] ProcessNames => new string[] {"q2pro", "quake2"};
-        public override bool GameTimeExists => false;
-        public override bool LoadRemovalExists => true;
 
-        public Quake2Game() : base(new CustomSettingBool[] {})
+        public Quake2Game() : base(new CustomSettingBool[]
+            { new CustomSettingBool("Use ingame time of Q2PRO Speed", false) })
         {
         }
 
@@ -84,7 +83,9 @@ namespace LiveSplit.Quake2
     public enum GameVersion
     {
         v2014_12_03, // latest version of original Q2PRO release, build from Dec 3 2014
-        v2016_01_12  // first release of modified Q2PRO, build from Jan 12 2016
+        v2016_01_12, // first release of modified Q2PRO, build from Jan 12 2016
+        v2018_04_22, // first release of Q2PRO Speed, r1603, build from Apr 22 2018
+        v2018_10_13  // Q2PRO Speed, r1761, build from Oct 13 2018
     }
 
     public enum Quake2State
@@ -102,6 +103,9 @@ namespace LiveSplit.ComponentAutosplitter
 
     partial class GameInfo
     {
+        public bool GameTimeExists => (ingameTimeAddress != 0x0 && useIngameTime);
+        public bool LoadRemovalExists => true;
+
         // 1 - main menu
         // 7 - in game
         private Int32 gameStateAddress;
@@ -110,9 +114,12 @@ namespace LiveSplit.ComponentAutosplitter
         // 0 when not in intermission, something != 0 when in intermission
         private Int32 inIntermissionAddress;
         private Int32 yPositionAddress;
-        
+        private Int32 ingameTimeAddress;
+
+        private bool useIngameTime = false;
+
         private GameVersion gameVersion;
-        
+
         public Quake2State PrevGameState { get; private set; }
         public Quake2State CurrGameState { get; private set; }
         public string PrevMap { get; private set; }
@@ -141,21 +148,32 @@ namespace LiveSplit.ComponentAutosplitter
             }
         }
 
+        partial void SetCustomSettings(CustomSettingBool[] customSettings)
+        {
+            useIngameTime = customSettings[0].Value;
+        }
+
         partial void GetVersion()
         {
-            if (gameProcess.MainModuleWow64Safe().ModuleMemorySize == 5029888)
+            switch (gameProcess.MainModuleWow64Safe().ModuleMemorySize)
             {
-                gameVersion = GameVersion.v2014_12_03;
-            }
-            else if (gameProcess.MainModuleWow64Safe().ModuleMemorySize == 5033984)
-            {
-                gameVersion = GameVersion.v2016_01_12;
-            }
-            else
-            {
-                MessageBox.Show("Unsupported game version", "LiveSplit.Quake2", 
-                                MessageBoxButtons.OK, MessageBoxIcon.Error);
-                gameVersion = GameVersion.v2014_12_03;
+                case 5029888:
+                    gameVersion = GameVersion.v2014_12_03;
+                    break;
+                case 5033984:
+                    gameVersion = GameVersion.v2016_01_12;
+                    break;
+                case 5079040:
+                    gameVersion = GameVersion.v2018_04_22;
+                    break;
+                case 5103616:
+                    gameVersion = GameVersion.v2018_10_13;
+                    break;
+                default:
+                    MessageBox.Show("Unsupported game version", "LiveSplit.Quake2",
+                                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    gameVersion = GameVersion.v2014_12_03;
+                    break;
             }
 
             switch (gameVersion)
@@ -171,6 +189,20 @@ namespace LiveSplit.ComponentAutosplitter
                     mapAddress = 0x33FF44;
                     inIntermissionAddress = 0x2FDF28;
                     yPositionAddress = 0x156744;
+                    break;
+                case GameVersion.v2018_04_22:
+                    gameStateAddress = 0x291180;
+                    mapAddress = 0x3A7490;
+                    inIntermissionAddress = 0x308C68;
+                    yPositionAddress = 0x161584;
+                    ingameTimeAddress = 0x1EEF44;
+                    break;
+                case GameVersion.v2018_10_13:
+                    gameStateAddress = 0x296CA0;
+                    mapAddress = 0x38DAF0;
+                    inIntermissionAddress = 0x30E788;
+                    yPositionAddress = 0x1666E4;
+                    ingameTimeAddress = 0x1E6A04;
                     break;
             }
         }
@@ -198,6 +230,12 @@ namespace LiveSplit.ComponentAutosplitter
                 {
                     InGame = false;
                 }
+            }
+
+            if (GameTimeExists)
+            {
+                gameProcess.ReadValue(baseAddress + ingameTimeAddress, out int milliseconds);
+                GameTime = TimeSpan.FromMilliseconds(milliseconds);
             }
         }
 
