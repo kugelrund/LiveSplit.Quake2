@@ -115,6 +115,7 @@ namespace LiveSplit.ComponentAutosplitter
         private Int32 inIntermissionAddress;
         private Int32 yPositionAddress;
         private Int32 ingameTimeAddress;
+        private Int32 igtPauseCounterAddress;
 
         private bool useIngameTime = false;
 
@@ -144,7 +145,12 @@ namespace LiveSplit.ComponentAutosplitter
             get
             {
                 gameProcess.ReadValue(baseAddress + yPositionAddress, out float yPosition);
-                return yPosition >= 164.75 || yPosition <= -2084.75;
+                int igtPauseCounter = 1;
+                if (igtPauseCounterAddress != 0x0)
+                {
+                    gameProcess.ReadValue(baseAddress + igtPauseCounterAddress, out igtPauseCounter);
+                }
+                return (yPosition >= 164 || yPosition <= -2084) && (igtPauseCounter > 0);
             }
         }
 
@@ -203,6 +209,7 @@ namespace LiveSplit.ComponentAutosplitter
                     inIntermissionAddress = 0x30E788;
                     yPositionAddress = 0x1666E4;
                     ingameTimeAddress = 0x1E6A04;
+                    igtPauseCounterAddress = 0x11F0C8;
                     break;
             }
         }
