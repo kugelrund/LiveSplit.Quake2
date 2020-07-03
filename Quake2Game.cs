@@ -15,7 +15,7 @@ namespace LiveSplit.Quake2
         public override string[] ProcessNames => new string[] {"q2pro", "quake2"};
 
         public Quake2Game() : base(new CustomSettingBool[]
-            { new CustomSettingBool("Use ingame time of Q2PRO Speed", false) })
+            { /*new CustomSettingBool("Use ingame time of Q2PRO Speed", false)*/ })
         {
         }
 
@@ -156,7 +156,7 @@ namespace LiveSplit.ComponentAutosplitter
 
         partial void SetCustomSettings(CustomSettingBool[] customSettings)
         {
-            useIngameTime = customSettings[0].Value;
+            //useIngameTime = customSettings[0].Value;
         }
 
         partial void GetVersion()
